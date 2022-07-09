@@ -1,0 +1,22 @@
+global:
+  rttl:
+    features:
+      oidc:
+        enabled: true
+
+jupyterhub:
+  hub:
+    config:
+      GenericOAuthenticator:
+        authorize_url: https://idp.u.washington.edu/idp/profile/oidc/authorize
+        client_id: "oidc/rttl.admin.axdd.s.uw.edu"
+        client_secret: ""
+        oauth_callback_url: ""
+        scope:
+        - openid profile email
+        token_url: https://idp.u.washington.edu/idp/profile/oidc/token
+        userdata_url: https://idp.u.washington.edu/idp/profile/oidc/userinfo
+        username_key: sub
+      JupyterHub:
+        admin_access: true
+        authenticator_class: generic-oauth

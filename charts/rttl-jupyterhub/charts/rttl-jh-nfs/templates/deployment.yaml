@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-server
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: nfs-server
+  template:
+    metadata:
+      labels:
+        role: nfs-server
+    spec:
+      containers:
+      - name: nfs-server
+        image: gcr.io/google_containers/volume-nfs:0.8
+        ports:
+          - name: nfs
+            containerPort: 2049
+          - name: mountd
+            containerPort: 20048
+          - name: rpcbind
+            containerPort: 111
+        securityContext:
+          privileged: true
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "chown -R 1000:1000 /exports"]
+        resources:
+          limits:
+            cpu: 250m
+            memory: "300Mi"
+          requests:
+            memory: "150Mi"
+            cpu: "100m"
+        volumeMounts:
+          - mountPath: /exports
+            name: nfspvc
+      volumes:
+        - name: nfspvc
+          persistentVolumeClaim:
+            claimName: nfs-disk

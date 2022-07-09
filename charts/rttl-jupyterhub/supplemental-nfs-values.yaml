@@ -1,0 +1,18 @@
+# Note: helm won't read this from a packaged chart - you will either need to download the chart or copy this locally to apply it.
+global:
+  rttl:
+    features:
+      nfs:
+        enabled: true
+
+# Note: this updated claim name still needs to be tested
+jupyterhub:
+  singleuser:
+    storage:
+      extraVolumes:
+        - name: jupyterhub-shared
+          persistentVolumeClaim:
+            claimName: pvc-jupyterhub-nfs
+      extraVolumeMounts:
+        - name: jupyterhub-shared
+          mountPath: /home/jovyan/Shared
