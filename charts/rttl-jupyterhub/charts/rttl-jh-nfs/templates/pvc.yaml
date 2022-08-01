@@ -2,7 +2,6 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: nfs-disk
-  namespace: {{ .Release.Namespace }}
 spec:
   accessModes:
     - ReadWriteOnce
