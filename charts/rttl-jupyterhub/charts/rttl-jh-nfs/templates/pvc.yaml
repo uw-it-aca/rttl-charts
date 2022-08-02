@@ -14,7 +14,6 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: {{ .Release.Namespace }}-nfs
-  namespace: {{ .Release.Namespace }}
 spec:
   capacity:
     storage: 5Gi
@@ -28,7 +27,6 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: pvc-jupyterhub-nfs
-  namespace: {{ .Release.Namespace }}
 spec:
   accessModes:
     - ReadWriteMany
