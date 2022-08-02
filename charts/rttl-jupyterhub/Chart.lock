@@ -4,6 +4,6 @@ dependencies:
   version: 1.1.3
 - name: rttl-jh-nfs
   repository: ""
-  version: 0.0.3
-digest: sha256:e726644c7932b9bc38e2767c62130ac28cfa8875c27d7ee1d5996bc456e0f337
-generated: "2022-08-02T11:15:35.412762-07:00"
+  version: 0.0.4
+digest: sha256:63eb1e84dc3573d68d81b93bd266bb518520e8c3cdc4b87b5a6583cc06b45521
+generated: "2022-08-02T12:02:33.139412-07:00"
