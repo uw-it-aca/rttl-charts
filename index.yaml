@@ -13,6 +13,24 @@ entries:
     version: 0.1.0
   rttl-jupyterhub:
   - apiVersion: v2
+    created: "2022-08-02T18:18:30.642387881Z"
+    dependencies:
+    - name: jupyterhub
+      repository: https://jupyterhub.github.io/helm-chart
+      version: 1.1.3
+    - condition: global.rttl.features.nfs.enabled
+      name: rttl-jh-nfs
+      repository: ""
+      version: 0.0.3
+    description: A Helm chart for the University of Washington JupyterHubs for Teaching
+      service
+    digest: 4adc428bd39ee3102344c548d5f6776f304c49e2d62aba8cadc6e0f20f9d403e
+    name: rttl-jupyterhub
+    type: application
+    urls:
+    - https://github.com/uw-it-aca/rttl-charts/releases/download/rttl-jupyterhub-0.1.2/rttl-jupyterhub-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
     created: "2022-08-01T23:27:18.634022198Z"
     dependencies:
     - name: jupyterhub
@@ -48,4 +66,4 @@ entries:
     urls:
     - https://github.com/uw-it-aca/rttl-charts/releases/download/rttl-jupyterhub-0.1.0/rttl-jupyterhub-0.1.0.tgz
     version: 0.1.0
-generated: "2022-08-01T23:27:18.634039498Z"
+generated: "2022-08-02T18:18:30.642422685Z"
