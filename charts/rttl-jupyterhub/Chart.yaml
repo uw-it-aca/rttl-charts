@@ -4,11 +4,11 @@ description: A Helm chart for the University of Washington JupyterHubs for Teach
 
 type: application
 
-version: 0.2.1
+version: 0.3.0
 
 dependencies:
   - name: jupyterhub
-    version: "2.0.0"
+    version: "3.2.1"
     repository: "https://jupyterhub.github.io/helm-chart"
   - name: rttl-jh-nfs
     version: "0.0.4"
