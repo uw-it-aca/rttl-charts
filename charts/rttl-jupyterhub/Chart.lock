@@ -1,9 +1,9 @@
 dependencies:
 - name: jupyterhub
   repository: https://jupyterhub.github.io/helm-chart
-  version: 2.0.0
+  version: 3.2.1
 - name: rttl-jh-nfs
   repository: ""
   version: 0.0.4
-digest: sha256:34172be24dd98401fe1f83598d2cba27e774b21f40ee3e80d3f62aa2ca42cadb
-generated: "2023-03-01T15:36:08.802591-08:00"
+digest: sha256:8fb94670a3980c3de3d8e7930d90a0166e1212148d6148ea57744c57688e5a72
+generated: "2023-12-19T10:23:36.239886-08:00"
