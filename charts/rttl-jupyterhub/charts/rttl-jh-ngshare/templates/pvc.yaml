@@ -1,0 +1,15 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ngshare-pvc
+annotations:
+    meta.helm.sh/release-name: ngshare
+finalizers:
+  - kubernetes.io/pvc-protection
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.global.rttl.pvstorageclass }}
+  resources:
+    requests:
+      storage: 5Gi

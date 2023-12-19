@@ -1,0 +1,11 @@
+apiVersion: 1
+kind: ConfigMap
+name: nbgrader-config
+data:
+  nbgrader_config.py: |
+    from ngshare_exchange import configureExchange
+    c = get_config()
+    configureExchange(
+      c, http://ngshare:8080/{{ .Release.Namespace }}/services/ngshare
+    )
+    c.CourseDirectory.course_id = '{{ .Release.Namespace }}'

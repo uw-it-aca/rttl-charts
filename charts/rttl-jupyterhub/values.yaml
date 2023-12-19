@@ -6,6 +6,8 @@ global:
         enabled: false
       oidc:
         enabled: false
+      ngshare:
+        enabled: false
 
 jupyterhub:
   ingress:

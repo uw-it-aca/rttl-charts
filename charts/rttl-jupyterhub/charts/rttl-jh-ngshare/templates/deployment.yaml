@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ngshare
+  labels:
+    app.kubernetes.io/instance: ngshare
+    app.kubernetes.io/name: ngshare
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: ngshare
+      app.kubernetes.io/name: ngshare
+    spec:
+      containers:
+      - name: ngshare
+        image: libretexts/ngshare:v0.6.0
+        imagePullPolicy: IfNotPresent
+        args:
+          - --admins
+          - a_rttl_canvas_int
+        env:
+          - name: JUPYTERHUB_SERVICE_NAME
+            value: ngshare
+          - name: JUPYTERHUB_API_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: ngshare-token
+                key: token
+          - name: JUPYTERHUB_API_URL
+            value: {{ .Values.global.rttl.hub_root_url }}/{{ .Release.Namespace }}/hub/api/
+          - name: JUPYTERHUB_BASE_URL
+            value: {{ .Values.global.rttl.hub_root_url }}/{{ .Release.Namespace }}
+          - name: JUPYTERHUB_SERVICE_PREFIX
+            value: /{{ .Release.Namespace }}/services/ngshare/
+          - name: JUPYTERHUB_SERVICE_URL
+            value: http://0.0.0.0:8080/
+          - name: JUPYTERHUB_CLIENT_ID
+            value: service-ngshare
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsUser: 65535
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        resources:
+          limits:
+            cpu: 250m
+            memory: "300Mi"
+          requests:
+            memory: "150Mi"
+            cpu: "100m"
+        volumeMounts:
+          - mountPath: /srv/ngshare
+            name: ngshare-pvc
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: http
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: http
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+      volumes:
+      - name: ngshare-pvc
+        persistentVolumeClaim:
+          claimName: ngshare-pvc

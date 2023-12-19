@@ -1,0 +1,10 @@
+apiVersion: v2
+name: rttl-jh-ngshare
+description: A subchart for enabling ngshare (nbgrader backend) in the University of Washington JupyterHub for Teaching service
+
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 0.0.1
