@@ -106,6 +106,7 @@ jupyterhub:
     networkPolicy:
       enabled: true
     startTimeout: 600
+    podHttpTimeout: 60
     defaultUrl: "/lab"
     lifecycleHooks:
       postStart:
