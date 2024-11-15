@@ -11,8 +11,8 @@ Helm charts for RTTL deployments
 - If the changes were in a subchart:
   - Update that version in the subchart's Chart.yaml
   - Update the subchart dependencies in the main Chart.yaml
-  - cd to './charts/rttl-jupyterhub' and run `helm dependency update`
-  - Verify contents of Chart.lock
+- cd to './charts/rttl-jupyterhub' and run `helm dependency update`
+- Verify contents of Chart.lock
 - git commit, PR, etc
 - Github Actions will run automatically after merge to main
 - Available releases show up at https://github.com/uw-it-aca/rttl-charts/releases
