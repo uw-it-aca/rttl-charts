@@ -2,7 +2,7 @@
 Helm charts for RTTL deployments
 
 ## Development
-- Template using upstream charts and view output, eg: `helm template RELEASE_NAME jupyterhub/jupyterhub --values "charts/rttl-jupyterhub/dev-values.yaml" --version "v3.2.1" --api-versions "networking.k8s.io/v1/Ingress" --api-versions "policy/v1" --kube-version "1.27.8" --namespace release_namespace > output.yaml`
+- Template using upstream charts and view output, eg: `helm template RELEASE_NAME jupyterhub/jupyterhub --values "charts/rttl-jupyterhub/dev-values.yaml" --version "v4.0.0" --api-versions "networking.k8s.io/v1/Ingress" --api-versions "policy/v1" --kube-version "1.30.5" --namespace release_namespace > output.yaml`
   - note that dev-values.yaml formatting differs since jupyterhub is not being used as a subchart in that case.
 
 ## Update process
