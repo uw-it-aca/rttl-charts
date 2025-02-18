@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: nfs-server
-        image: gcr.io/google_containers/volume-nfs:0.8
+        image: us-west1-docker.pkg.dev/uwit-mci-axdd/rttl-images/nfs-server:latest
         ports:
           - name: nfs
             containerPort: 2049
