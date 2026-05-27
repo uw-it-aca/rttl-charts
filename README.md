@@ -28,4 +28,4 @@ Helm charts for RTTL deployments
 - git commit, PR, etc
 - Github Actions will run automatically after merge to main
 - Available releases show up at https://github.com/uw-it-aca/rttl-charts/releases
-- Update Vault rttl/prod/admin/config.yaml to use new version of this chart.
+- Update Vault rttl/$ENV/admin/config.yaml (`chart_version: "vX.X.X"`) to use new version of this chart.
