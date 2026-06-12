@@ -6,6 +6,11 @@ global:
         enabled: false
       oidc:
         enabled: false
+      kgateway:
+        enabled: false
+        listenerSetName: ""
+        listenerSetNamespace: "default"
+        hostname: ""
 
 jupyterhub:
   ingress:

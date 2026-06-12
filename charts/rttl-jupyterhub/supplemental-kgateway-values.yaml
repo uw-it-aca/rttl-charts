@@ -1,0 +1,4 @@
+# Note: helm won't read this from a packaged chart - you will either need to download the chart or copy this locally to apply it.
+jupyterhub:
+  ingress:
+    enabled: false
