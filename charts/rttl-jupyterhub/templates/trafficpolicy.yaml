@@ -1,0 +1,18 @@
+{{- if .Values.global.rttl.features.gatewayOIDC.enabled -}}
+apiVersion: gateway.kgateway.dev/v1alpha1
+kind: TrafficPolicy
+metadata:
+  name: {{ .Release.Name }}-oauth2
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      name: {{ include "rttl-jupyterhub.hubRouteName" . }}
+  oauth2:
+    extensionRef:
+      name: {{ .Values.global.rttl.features.gatewayOIDC.extensionRef.name }}
+      namespace: {{ .Values.global.rttl.features.gatewayOIDC.extensionRef.namespace }}
+{{- end }}
