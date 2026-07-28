@@ -1,0 +1,3 @@
+{{- /* Renders no manifest; exists only to execute the feature-dependency guards. */ -}}
+{{- include "rttl-jupyterhub.validateGatewayOIDC" . -}}
+{{- include "rttl-jupyterhub.validateKgatewaySectionNames" . -}}

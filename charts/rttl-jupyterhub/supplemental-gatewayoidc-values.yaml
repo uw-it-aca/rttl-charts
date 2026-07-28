@@ -1,0 +1,56 @@
+# Gateway OIDC (kgateway extAuth / header-trust) supplemental values.
+#
+# Note: helm won't read this from a packaged chart - you will either need to
+# download the chart or copy this locally to apply it.
+#
+# rttl-admin passes this as an extra `--values` layer ONLY when the gatewayOIDC
+# feature is on. The feature flag itself (global.rttl.features.gatewayOIDC.enabled)
+# and the per-cluster values are injected dynamically by rttl-admin,
+# NOT set here - this file carries only the authenticator payload.
+#
+# This delivers RemoteUserAuthenticator via hub.extraConfig. extraConfig runs
+# after the chart's hub.config, so `c.JupyterHub.authenticator_class` here wins
+# over the (now-inert) Canvas generic-oauth class in values.yaml.
+
+jupyterhub:
+  hub:
+    config:
+      Authenticator:
+        # DB membership is the allow-list; admins may add users. allowed_users /
+        # admin_users come from values.yaml and are unchanged (sub == NetID ==
+        # login_id, so the same lists keep working).
+        allow_existing_users: true
+    extraConfig:
+      # MUST use login_user() (runs authenticate() + check_allowed()), never
+      # auth_to_user()/user_from_username() which skip check_allowed() and would
+      # auto-create/authorize every valid UW user (authorization bypass).
+      remoteuser: |
+        from jupyterhub.auth import Authenticator
+        from jupyterhub.handlers import BaseHandler
+        from tornado import web
+
+        HEADER = "X-Auth-Request-User"
+
+        class RemoteUserLoginHandler(BaseHandler):
+            async def get(self):
+                remote_user = self.request.headers.get(HEADER, "")
+                if not remote_user:
+                    # Should not happen: the gateway enforces auth and injects the
+                    # header. A missing header means a request bypassed the gateway.
+                    raise web.HTTPError(401, "Missing %s header" % HEADER)
+                # login_user() runs authenticate() + check_allowed() (authorization)
+                # and sets the cookie; returns None if authenticated-but-not-allowed.
+                user = await self.login_user({"name": remote_user})
+                if user is None:
+                    raise web.HTTPError(403, "%s is not allowed to access this hub" % remote_user)
+                self.redirect(self.get_next_url(user))
+
+        class RemoteUserAuthenticator(Authenticator):
+            auto_login = True
+            def get_handlers(self, app):
+                return [(r"/login", RemoteUserLoginHandler)]
+            async def authenticate(self, handler, data):
+                username = (data or {}).get("name")
+                return {"name": username} if username else None
+
+        c.JupyterHub.authenticator_class = RemoteUserAuthenticator

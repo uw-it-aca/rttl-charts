@@ -1,8 +1,15 @@
-{{- if .Values.global.rttl.features.kgateway.enabled -}}
+{{- if .Values.global.rttl.features.gatewayOIDC.enabled -}}
+{{- /*
+  api-exempt route: a more-specific HTTPRoute for /<baseUrl>/hub/api/ with NO
+  oauth2 TrafficPolicy attached. Gateway API most-specific path matching routes
+  /hub/api/ traffic here (skipping OIDC) while everything else stays on the main
+  route the TrafficPolicy guards. usersync provisioning hits the hub API via the
+  public URL with a token and must not be 302'd to the IdP.
+*/ -}}
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ include "rttl-jupyterhub.hubRouteName" . }}-api
   labels:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/instance: {{ .Release.Name }}
@@ -22,7 +29,7 @@ spec:
       matches:
         - path:
             type: PathPrefix
-            value: {{ trimSuffix "/" .Values.jupyterhub.hub.baseUrl }}/
+            value: {{ trimSuffix "/" .Values.jupyterhub.hub.baseUrl }}/hub/api/
       backendRefs:
         - name: proxy-public
           port: 80

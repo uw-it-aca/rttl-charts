@@ -11,6 +11,29 @@ global:
         listenerSetName: ""
         listenerSetNamespace: "default"
         hostname: ""
+        # ListenerSet listener section names (defined on the ListenerSet in the
+        # flux repo). Set BOTH to turn on a strict HTTP->HTTPS redirect: the hub
+        # route (and the api-exempt route) are pinned to the :443 listener, and
+        # a redirect route is rendered on the :80 listener that 308s http
+        # traffic to https. Leave BOTH empty (default) to attach the hub route
+        # to every listener and render no redirect (legacy behavior — unchanged).
+        # httpSectionName requires httpsSectionName (enforced at template time).
+        httpSectionName: ""     # :80 listener, e.g. "jupyter-eval-http"
+        httpsSectionName: ""    # :443 listener, e.g. "jupyter-eval-https"
+      # Gateway-terminated UW OIDC (kgateway extAuth / header-trust).
+      # Requires kgateway.enabled=true. When enabled, the hub stops doing Canvas
+      # OAuth and trusts the X-Auth-Request-User header the gateway injects; the
+      # chart renders a per-hub oauth2 TrafficPolicy + an api-exempt HTTPRoute.
+      # `enabled` is injected per-deployment by rttl-admin (layer 3), like the
+      # other feature flags. See supplemental-gatewayoidc-values.yaml for the
+      # authenticator payload.
+      gatewayOIDC:
+        enabled: false
+        # Shared kgateway GatewayExtension that terminates UW OIDC. Per-cluster;
+        # the per-hub TrafficPolicy's oauth2.extensionRef points here.
+        extensionRef:
+          name: "uw-oidc"
+          namespace: "rttl-system"
 
 jupyterhub:
   ingress:
@@ -96,7 +119,7 @@ jupyterhub:
   singleuser:
     image:
       name: us-west1-docker.pkg.dev/uwit-mci-axdd/rttl-images/jupyter-scipy-notebook
-      tag: "2.3"
+      tag: "2.9"
       pullPolicy: IfNotPresent
     storage:
       capacity: 5G
