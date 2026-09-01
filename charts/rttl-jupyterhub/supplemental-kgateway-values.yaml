@@ -2,3 +2,30 @@
 jupyterhub:
   ingress:
     enabled: false
+  proxy:
+    chp:
+      networkPolicy:
+        enabled: true
+        # z2jh's default `allowedIngressPorts: [http, https]` renders a
+        # from-less "allow from anywhere" rule for the proxy's http/https
+        # ports, which exposes an attack surface in scenarios where we use
+        # headers to assert auth inside the cluster. Drop the chart default.
+        allowedIngressPorts: []
+        # Then re-add the same ports, but only from the kgateway data plane
+        # pods (the ones fronting the gateway named "default-gateway") in the
+        # kgateway-system namespace. namespaceSelector + podSelector as a
+        # SINGLE list element AND together (pods with that label, in that
+        # namespace); splitting them into two elements would OR them and allow
+        # the whole kgateway-system namespace plus any pod named that
+        # anywhere.
+        ingress:
+          - ports:
+              - port: http
+              - port: https
+            from:
+              - namespaceSelector:
+                  matchLabels:
+                    kubernetes.io/metadata.name: kgateway-system
+                podSelector:
+                  matchLabels:
+                    gateway.networking.k8s.io/gateway-name: default-gateway
