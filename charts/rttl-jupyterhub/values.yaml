@@ -34,6 +34,19 @@ global:
         extensionRef:
           name: "uw-oidc"
           namespace: "rttl-system"
+      # Cluster-wide Prometheus (kube-prometheus-stack / Prometheus Operator
+      # in mci-monitoring) that scrapes each hub's /hub/metrics endpoint.
+      # Controls whether this chart renders a per-hub ServiceMonitor. The
+      # namespace/podSelectorLabels below are the single source of truth: the
+      # NetworkPolicy ingress rule at jupyterhub.hub.networkPolicy.ingress
+      # references them via YAML anchors (values.yaml is plain data with no
+      # Helm templating, but anchors/aliases are a YAML-native feature and
+      # are resolved by the YAML parser before Helm ever sees it).
+      monitoring:
+        enabled: true
+        namespace: &monitoringNamespace "mci-monitoring"
+        podSelectorLabels: &monitoringPodSelectorLabels
+          app.kubernetes.io/name: prometheus
 
 jupyterhub:
   ingress:
@@ -47,6 +60,19 @@ jupyterhub:
     baseUrl: ""
     networkPolicy:
       enabled: true
+      # Allow the cluster Prometheus (global.rttl.features.monitoring above,
+      # via YAML anchors) to reach the hub's metrics port across namespaces.
+      # The base Z2JH chart only allows same-namespace pods labeled
+      # hub.jupyter.org/network-access-hub: "true" by default.
+      ingress:
+        - from:
+            - namespaceSelector:
+                matchLabels:
+                  kubernetes.io/metadata.name: *monitoringNamespace
+              podSelector:
+                matchLabels: *monitoringPodSelectorLabels
+          ports:
+            - port: http
     services:
       rttl_admin_service:
         name: rttl_admin_service
@@ -79,6 +105,12 @@ jupyterhub:
         username_key: login_id
       JupyterHub:
         authenticator_class: generic-oauth
+        # Metrics are only reachable from inside the cluster (see the
+        # NetworkPolicy ingress rule above restricting /hub/metrics to the
+        # cluster Prometheus); disabling the bearer-token requirement avoids
+        # having to mint/track a scrape token per dynamically-created course
+        # namespace.
+        authenticate_prometheus: false
   proxy:
     secretToken:
     chp:

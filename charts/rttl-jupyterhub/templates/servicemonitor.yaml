@@ -1,0 +1,23 @@
+{{- if .Values.global.rttl.features.monitoring.enabled -}}
+# Prometheus Operator CRD so the cluster Prometheus (kube-prometheus-stack in
+# mci-monitoring) discovers this hub's /hub/metrics endpoint. The base Z2JH
+# chart does not ship a ServiceMonitor; it only sets prometheus.io/scrape
+# annotations, which kube-prometheus-stack ignores (it relies on
+# ServiceMonitor/PodMonitor CRDs instead of annotation-based discovery).
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-hub
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: jupyterhub
+      component: hub
+      release: {{ .Release.Name }}
+  endpoints:
+    - port: hub
+      path: {{ trimSuffix "/" .Values.jupyterhub.hub.baseUrl }}/hub/metrics
+{{- end }}
